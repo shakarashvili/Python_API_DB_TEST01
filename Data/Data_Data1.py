@@ -6,6 +6,9 @@ from selenium.webdriver.common.by import By
 from urllib3.util import wait
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class Data1:
     def __init__(self):
@@ -13,6 +16,9 @@ class Data1:
         self.driver = webdriver.Chrome(service=webdriver.chrome.service.Service(ChromeDriverManager().install()))
         self.driver.maximize_window()
         self.driver.get("https://www.automationexercise.com/")
+
+    def close_browser(self):
+        self.driver.quit()
 
     # Elements
     def get_home_page_title(self):
@@ -34,9 +40,12 @@ class Data1:
         return self.driver.find_element(By.XPATH, "//input[@data-qa='signup-email']")
     def get_sing_up_button_element(self):
         return self.driver.find_element(By.CSS_SELECTOR, "button[data-qa='signup-button']")
+    # def get_Enter_Account_Information_title(self):
+    #     return self.driver.find_element(By.XPATH, "//b[text()='Enter Account Information']")
     def get_Enter_Account_Information_title(self):
-        return self.driver.find_element(By.XPATH, "//b[text()='Enter Account Information']")
-
+        return WebDriverWait(self.driver, 2).until(
+            EC.presence_of_element_located((By.XPATH, "//b[text()='Enter Account Information']"))
+        )
 
     def get_Title_MR_Enter_Account_page_element(self):
        return self.driver.find_element(By.XPATH, "//label[@for='id_gender1' ]")
@@ -196,8 +205,15 @@ class Data1:
 
     def click_Account_Created_action(self):
         self.get_Account_Created_element().click()
+    # def click_delete_account_action(self):
+    #     self.get_delete_account_element().click()
     def click_delete_account_action(self):
-        self.get_delete_account_element().click()
+        delete_button = self.driver.find_element(By.ID, 'delete_account_button')
+        if delete_button:
+            delete_button.click()
+            return delete_button  # Ensure you're returning the correct element
+        return None
+
     def account_deleted_message_text_action(self):
         self.get_account_deleted_message_element().is_displayed()
     def alert_dismiss(self):
@@ -219,5 +235,4 @@ class Data1:
  #   return self.driver.find_element(By.CSS_SELECTOR, "select[data-qa='country'] option[value='Canada']")
 
 
-def close_browser(self):
-        self.driver.quit()
+
